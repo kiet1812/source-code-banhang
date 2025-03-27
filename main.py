@@ -13,32 +13,72 @@ class db:
                 rank TEXT
             )
         """)
+        self.cursor.execute("""
+            CREATE TABLE IF NOT EXISTS Products(
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                nameProducts UNIQUE,
+                price INTEGER
+            )
+        """)
+    # Users
     def insert_users(self, name, address, phone_numbers, rank = 'member'):
         self.cursor.execute("""
             INSERT INTO Users(name, address, phone_numbers, rank)
             VALUES('{}', '{}', '{}', '{}');
         """.format(name, address, phone_numbers, rank))
         self.database.commit()
-    def print_table(self):
+    def print_table_users(self):
         self.cursor.execute("SELECT * FROM Users")
         rows = self.cursor.fetchall()
         print('ĐỊNH DẠNG: ID | NAME | ADDRESS | PHONE NUMBERS | RANK')
         for row in rows: 
             print(f'{row[0]} | {row[1]} | {row[2]} | {row[3]} | {row[4]}')
-    def delete_users(self, id):
+    # def delete_users(self, id):
+    #     self.cursor.execute("""
+    #         DELETE FROM Users
+    #         WHERE id = {}
+    #     """.format(id))
+    #     self.database.commit()
+    def count_users(self):
+        self.cursor.execute("SELECT COUNT(*) FROM Users")
+        count = self.cursor.fetchone()[0]
+        print(count)
+    # Products
+    def add_product(self, name_product, price):
         self.cursor.execute("""
-            DELETE FROM Users
+            INSERT INTO Products(nameProducts, price)
+            VALUES('{}', {})
+        """.format(name_product, price))
+        self.database.commit()
+    def print_table_products(self):
+        self.cursor.execute("SELECT * FROM Products")
+        rows = self.cursor.fetchall()
+        for row in rows:
+            print(f"{row[0]} | {row[1]} | {row[2]}k")
+    def count_products(self):
+        self.cursor.execute("SELECT COUNT(*) FROM Products")
+        count = self.cursor.fetchone()[0]
+        print(count)
+    def delete_product(self, id):
+        self.cursor.execute("""
+            DELETE FROM Products
             WHERE id = {}
         """.format(id))
         self.database.commit()
-    def count_users(self):
-        self.cursor.execute("SELECT COUNT(*) FROM Users")
-        count = self.cursor.fetchone()
-        print(count[0])
-
-
+    def edit_price_products(self, id, price_new):
+        self.cursor.execute("""
+            UPDATE Products
+            SET price = {}
+            WHERE id = {}
+        """.format(price_new, id))
+        self.database.commit()
 data = db()
 # data.insert_users('Pham Tuan Kiet', '755 - Dong Tai - Van Thang - Nong Cong - Thanh Hoa', '0396138606', 'Chu quan')
 # data.delete_users(1)
 # data.print_table()
-data.count_users()
+# data.count_users()
+# data.add_product("Trà sữa trân chân đường đen", 40)
+# data.count_products()
+data.print_table_products()
+data.edit_price_products(1, 35)
+data.print_table_products()
